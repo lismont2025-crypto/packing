@@ -3,45 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lismount Tex India LLP</title>
+<title>Packing - Lismount Tex ERP</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
-LISMOUNT TEX INDIA LLP
+Packing List - Lismount Tex ERP
 </header>
 
 <nav>
-<a href="index.html">Home</a>
-<a href="packing.html">Packing List</a>
-<a href="#">Products</a>
-<a href="#">Contact</a>
+<a href="index.html">Dashboard</a>
+<a href="stock.html">Fabric Stock</a>
+<a href="packing.html">Packing</a>
+<a href="customer.html">Customer DB</a>
 </nav>
 
 <div class="section">
-<h2>Welcome to Lismount Tex</h2>
-<p>Premium Quality Textile & Fabric Supplier</p>
+<h2>Create Packing Entry</h2>
+
+Customer: <input type="text" id="customer" placeholder="Customer Name"><br><br>
+Fabric Type: <input type="text" id="fabric" placeholder="Fabric Type"><br><br>
+Quantity (Meters): <input type="number" id="quantity" placeholder="Quantity"><br><br>
+<button onclick="addPacking()">Add Packing</button>
+
+<h3>Recent Packing Entries</h3>
+<table border="1" cellpadding="10" style="margin:auto; border-collapse:collapse; width:80%;" id="packing-table">
+<tr>
+<th>Challan No</th>
+<th>Customer</th>
+<th>Fabric</th>
+<th>Quantity</th>
+<th>Date</th>
+</tr>
+</table>
 </div>
 
-<div class="section products">
-<div class="product-box">
-<h3>Cotton Fabric</h3>
-<p>High quality cotton fabric.</p>
-</div>
-<div class="product-box">
-<h3>Polyester Fabric</h3>
-<p>Durable and export quality.</p>
-</div>
-<div class="product-box">
-<h3>Knitted Fabric</h3>
-<p>Premium knitted textile material.</p>
-</div>
-</div>
+<script>
+let challanNo=1;
 
-<footer>
-© 2026 Lismount Tex India LLP
-</footer>
+function addPacking(){
+    let customer=document.getElementById("customer").value;
+    let fabric=document.getElementById("fabric").value;
+    let quantity=document.getElementById("quantity").value;
+
+    if(customer && fabric && quantity){
+        let table=document.getElementById("packing-table");
+        let row=table.insertRow(-1);
+        row.insertCell(0).innerText=challanNo++;
+        row.insertCell(1).innerText=customer;
+        row.insertCell(2).innerText=fabric;
+        row.insertCell(3).innerText=quantity;
+        row.insertCell(4).innerText=new Date().toLocaleDateString();
+
+        // clear inputs
+        document.getElementById("customer").value="";
+        document.getElementById("fabric").value="";
+        document.getElementById("quantity").value="";
+    } else {
+        alert("Please fill all fields");
+    }
+}
+</script>
 
 </body>
 </html>
