@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Packing List - Lismount Tex</title>
+
+<style>
+
+body{
+font-family: Arial;
+margin:40px;
+}
+
+.header{
+text-align:center;
+}
+
+.company{
+font-size:22px;
+font-weight:bold;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+table,th,td{
+border:1px solid black;
+}
+
+th,td{
+padding:6px;
+text-align:center;
+}
+
+input{
+width:95%;
+border:none;
+text-align:center;
+}
+
+button{
+margin-top:20px;
+padding:10px 20px;
+font-size:16px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h2>LISMOUNT TEX INDIA LLP</h2>
+<h3>Packing List</h3>
+
+</div>
+
+<p>
+Order No : <input type="text"> <br><br>
+Party Name : <input type="text"> <br><br>
+Delivery No : <input type="text"> <br><br>
+Invoice Date : <input type="date">
+</p>
+
+<table>
+
+<tr>
+<th>S.No</th>
+<th>Bale No</th>
+<th>No Of Pieces</th>
+<th>Bale Mtrs</th>
+<th>Net Weight</th>
+<th>Individual Piece Mtrs</th>
+</tr>
+
+<tr>
+<td>1</td>
+<td><input type="text"></td>
+<td><input type="number"></td>
+<td><input type="number"></td>
+<td><input type="number"></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>2</td>
+<td><input type="text"></td>
+<td><input type="number"></td>
+<td><input type="number"></td>
+<td><input type="number"></td>
+<td><input type="text"></td>
+</tr>
+
+<tr>
+<td>3</td>
+<td><input type="text"></td>
+<td><input type="number"></td>
+<td><input type="number"></td>
+<td><input type="number"></td>
+<td><input type="text"></td>
+</tr>
+
+</table>
+
+<br>
+
+<table>
+
+<tr>
+<th>Above 250 Mtrs</th>
+<th>80 To 249 Mtrs</th>
+<th>40 To 79 Mtrs</th>
+<th>0 To 39 Mtrs</th>
+</tr>
+
+<tr>
+<td><input type="number"></td>
+<td><input type="number"></td>
+<td><input type="number"></td>
+<td><input type="number"></td>
+</tr>
+
+</table>
+
+<br>
+
+<table>
+
+<tr>
+<th>Total Pieces</th>
+<th>Total Meter</th>
+<th>Net Weight</th>
+</tr>
+
+<tr>
+<td><input type="number"></td>
+<td><input type="number"></td>
+<td><input type="number"></td>
+</tr>
+
+</table>
+
+<br><br>
+
+<p style="text-align:right;">
+For LISMOUNT TEX INDIA LLP <br><br>
+Authorised Signatory
+</p>
+
+<button onclick="window.print()">Print Packing List</button>
+
+</body>
+</html>
