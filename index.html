@@ -8,17 +8,23 @@
 
 body{
 font-family:Arial;
-margin:40px;
+margin:30px;
 }
 
 .header{
-text-align:center;
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.logo{
+height:80px;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-margin-top:15px;
+margin-top:20px;
 }
 
 table,th,td{
@@ -30,7 +36,7 @@ padding:6px;
 text-align:center;
 }
 
-input{
+input,select{
 width:95%;
 border:none;
 text-align:center;
@@ -44,6 +50,18 @@ padding:8px 15px;
 </style>
 
 <script>
+
+function challanNumber(){
+
+var num=localStorage.getItem("challan");
+
+if(!num){num=1;}
+
+document.getElementById("challan").value=num;
+
+localStorage.setItem("challan",Number(num)+1);
+
+}
 
 function addRow(){
 
@@ -86,19 +104,41 @@ document.getElementById("pieceTotal").value=pieceTotal;
 
 </head>
 
-<body>
+<body onload="challanNumber()">
 
 <div class="header">
 
+<img src="logo.png" class="logo">
+
+<div>
 <h2>LISMOUNT TEX INDIA LLP</h2>
-<h3>Packing List</h3>
+Packing List
+</div>
 
 </div>
 
-Order No : <input><br><br>
-Party Name : <input><br><br>
-Delivery No : <input><br><br>
-Date : <input type="date">
+<br>
+
+Delivery Challan No :
+<input id="challan" readonly>
+
+<br><br>
+
+Customer :
+
+<select>
+
+<option>AB TEX</option>
+<option>RR FABRICS</option>
+<option>SK GARMENTS</option>
+
+</select>
+
+<br><br>
+
+Date :
+
+<input type="date">
 
 <table id="table">
 
@@ -140,12 +180,7 @@ Date : <input type="date">
 
 <br><br>
 
-<p style="text-align:right;">
-For LISMOUNT TEX INDIA LLP<br><br>
-Authorised Signatory
-</p>
-
-<button onclick="window.print()">Print Packing List</button>
+<button onclick="window.print()">Download / Print PDF</button>
 
 </body>
 </html>
