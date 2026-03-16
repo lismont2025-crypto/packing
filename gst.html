@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script>
+
+function total(){
+
+var meter=document.getElementById("meter").value;
+
+var rate=document.getElementById("rate").value;
+
+var subtotal=meter*rate;
+
+var gst=subtotal*0.05;
+
+var total=subtotal+gst;
+
+document.getElementById("total").value=total;
+
+}
+
+</script>
+
+</head>
+
+<body>
+
+<h2>GST Invoice</h2>
+
+Customer <input><br><br>
+
+Meter <input id="meter"><br><br>
+
+Rate <input id="rate"><br><br>
+
+<button onclick="total()">Calculate</button>
+
+<br><br>
+
+Total Amount <input id="total">
+
+</body>
+</html>
