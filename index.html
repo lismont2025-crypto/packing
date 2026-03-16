@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Packing List - Lismount Tex</title>
+
+<title>Lismount Tex Packing List</title>
 
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 margin:40px;
 }
 
 .header{
 text-align:center;
-}
-
-.company{
-font-size:22px;
-font-weight:bold;
 }
 
 table{
@@ -41,12 +37,52 @@ text-align:center;
 }
 
 button{
-margin-top:20px;
-padding:10px 20px;
-font-size:16px;
+margin-top:10px;
+padding:8px 15px;
 }
 
 </style>
+
+<script>
+
+function addRow(){
+
+var table=document.getElementById("table");
+var row=table.insertRow();
+
+row.innerHTML=
+`
+<td>${table.rows.length-1}</td>
+<td><input></td>
+<td><input class="piece" type="number" oninput="calculate()"></td>
+<td><input class="meter" type="number" oninput="calculate()"></td>
+<td><input></td>
+`;
+
+}
+
+function calculate(){
+
+var meters=document.querySelectorAll(".meter");
+var pieces=document.querySelectorAll(".piece");
+
+var meterTotal=0;
+var pieceTotal=0;
+
+meters.forEach(function(m){
+meterTotal+=Number(m.value);
+});
+
+pieces.forEach(function(p){
+pieceTotal+=Number(p.value);
+});
+
+document.getElementById("meterTotal").value=meterTotal;
+document.getElementById("pieceTotal").value=pieceTotal;
+
+}
+
+</script>
 
 </head>
 
@@ -59,14 +95,12 @@ font-size:16px;
 
 </div>
 
-<p>
-Order No : <input type="text"> <br><br>
-Party Name : <input type="text"> <br><br>
-Delivery No : <input type="text"> <br><br>
-Invoice Date : <input type="date">
-</p>
+Order No : <input><br><br>
+Party Name : <input><br><br>
+Delivery No : <input><br><br>
+Date : <input type="date">
 
-<table>
+<table id="table">
 
 <tr>
 <th>S.No</th>
@@ -74,72 +108,32 @@ Invoice Date : <input type="date">
 <th>No Of Pieces</th>
 <th>Bale Mtrs</th>
 <th>Net Weight</th>
-<th>Individual Piece Mtrs</th>
 </tr>
 
 <tr>
 <td>1</td>
-<td><input type="text"></td>
-<td><input type="number"></td>
-<td><input type="number"></td>
-<td><input type="number"></td>
-<td><input type="text"></td>
-</tr>
-
-<tr>
-<td>2</td>
-<td><input type="text"></td>
-<td><input type="number"></td>
-<td><input type="number"></td>
-<td><input type="number"></td>
-<td><input type="text"></td>
-</tr>
-
-<tr>
-<td>3</td>
-<td><input type="text"></td>
-<td><input type="number"></td>
-<td><input type="number"></td>
-<td><input type="number"></td>
-<td><input type="text"></td>
+<td><input></td>
+<td><input class="piece" type="number" oninput="calculate()"></td>
+<td><input class="meter" type="number" oninput="calculate()"></td>
+<td><input></td>
 </tr>
 
 </table>
 
-<br>
+<button onclick="addRow()">Add Bale</button>
 
-<table>
-
-<tr>
-<th>Above 250 Mtrs</th>
-<th>80 To 249 Mtrs</th>
-<th>40 To 79 Mtrs</th>
-<th>0 To 39 Mtrs</th>
-</tr>
-
-<tr>
-<td><input type="number"></td>
-<td><input type="number"></td>
-<td><input type="number"></td>
-<td><input type="number"></td>
-</tr>
-
-</table>
-
-<br>
+<br><br>
 
 <table>
 
 <tr>
 <th>Total Pieces</th>
 <th>Total Meter</th>
-<th>Net Weight</th>
 </tr>
 
 <tr>
-<td><input type="number"></td>
-<td><input type="number"></td>
-<td><input type="number"></td>
+<td><input id="pieceTotal" readonly></td>
+<td><input id="meterTotal" readonly></td>
 </tr>
 
 </table>
@@ -147,7 +141,7 @@ Invoice Date : <input type="date">
 <br><br>
 
 <p style="text-align:right;">
-For LISMOUNT TEX INDIA LLP <br><br>
+For LISMOUNT TEX INDIA LLP<br><br>
 Authorised Signatory
 </p>
 
