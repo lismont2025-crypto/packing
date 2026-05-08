@@ -1,162 +1,597 @@
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Lab Dip Approval</title>
+<title>Account List</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<style>
-@page {
-    size: A4;
-    margin: 10mm;
-}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+	href="/iTexCloudHSTNProd/resources/images/favicon.ico"
+	rel="shortcut icon" type="image/x-icon" />
 
-body {
-    font-family: Arial, sans-serif;
-}
+<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/moment.min.js"></script>
+<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/moment-with-locales.js"></script>
 
-.container {
-    width: 100%;
-    height: 100%;
-    border: 2px solid black;
-    padding: 10px;
-    box-sizing: border-box;
-}
+<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/validate.min.js"></script>
+<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/bootstrapnew.min.js"></script>
+<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/loader.js"></script>
+<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/bootstrap-datetimepicker.min.js"></script>
 
-.header {
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: red;
-}
+<script
+	src="/iTexCloudHSTNProd/resources/js/jquery-ui.js"></script>
+<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/fabric_spec_form.js"></script>
+<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/domestic_fabric_spec.js"></script>
+<link rel="stylesheet"
+	href="/iTexCloudHSTNProd/resources/css/jquery-ui.css">
+<link type="text/css"
+	href="/iTexCloudHSTNProd/resources/css/bootstrap.min.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexCloudHSTNProd/resources/css/style.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexCloudHSTNProd/resources/css/menu.css"
+	rel="Stylesheet" />
+<link type="text/css"
+	href="/iTexCloudHSTNProd/resources/css/loginPage.css"
+	rel="Stylesheet" />
 
-.title {
-    text-align: center;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
+<link type="text/css"
+	href="/iTexCloudHSTNProd/resources/css/bootstrap-datetimepicker.min.css"
+	rel="Stylesheet" />
+<link rel="stylesheet"
+	href="/iTexCloudHSTNProd/resources/css/chosen.min.css">
+<script
+	src="/iTexCloudHSTNProd/resources/js/chosen.jquery.min.js"></script>
+	
+		
+	<script type="text/javascript"
+	src="/iTexCloudHSTNProd/resources/js/datevalidation.js"></script>
+	
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+		<input type="hidden" value="" id="editAccess"/>
+	<input type="hidden" value="" id="addAccess"/>
+	<input type="hidden" value="yes" id="dynamiceMenuEnabled"/>
+	<input type="hidden" value="" id="deleteAccess"/>
+<input type="hidden" id="fromFinancialDate" value="2026-04-01 00:00:00.0" />
+<script>
 
-td {
-    border: 1px solid black;
-    padding: 6px;
-    font-size: 12px;
-}
 
-.label {
-    background: orange;
-    width: 30%;
-    font-weight: bold;
-}
-
-input {
-    width: 100%;
-    border: none;
-    outline: none;
-}
-
-.box-area {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 120px);
-    gap: 5px;
-    margin-top: 10px;
-}
-
-.box {
-    border: 1px solid black;
-    position: relative;
-}
-
-.box span {
-    position: absolute;
-    bottom: 5px;
-    left: 5px;
-    font-size: 11px;
-}
-
-.footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    font-size: 12px;
-}
-
-.approved { color: green; font-weight: bold; }
-.rejected { color: red; font-weight: bold; }
-
-textarea {
-    width: 200px;
-    height: 40px;
-    border: 1px solid black;
-}
-
-@media print {
-    input, textarea {
-        border: none;
+	$(document)
+	.ready(function() {
+	$( "select" ).addClass( "livesearch" );
+	$(".livesearch").chosen({max_selected_options:Infinity,search_contains: true});
+	$.validator.setDefaults({ ignore: ":hidden:not(select)" });
+	 $(".livesearch-deselect").chosen({allow_single_deselect:true});
+	 $('input[type="number"]').attr('onkeypress', ' return (event.charCode == 8 || event.charCode == 0) ? null : ((event.charCode >= 48 && event.charCode <= 57) || event.charCode==46)');
+	 try{
+			if('yes'== $("#dynamiceMenuEnabled").val())
+			checkAddEditAccess();
+		}catch(err){
+			
+		}
+	
+	});
+	 function checkAddEditAccess(){
+			
+			if($("#addAccess").val()==0){
+				$('.skyBlueBtn').each(function(i, obj) {
+					if(compareValues(obj.value,"Add")){
+						obj.style.display='none';
+					}
+				});
+			}
+			
+			if($("#editAccess").val()==0){
+				$('.actionsImg').each(function(i, obj) {
+					if(obj.src.trim().includes("images/edit.png") || obj.src.trim().includes("images/close.png")){
+						obj.style.display='none';
+					}
+				});
+				
+				$('.greenBtn').each(function(i, obj) {
+					if(compareValues(obj.value,"Save")||compareValues(obj.value,"Submit")||compareValues(obj.value,"Update")){
+						obj.style.display='none';
+					}
+				});
+				 
+				
+				$('a').each(function(index,anchorTag) {
+				    
+				    if(compareValues(anchorTag.innerHTML,"Edit")){
+				    	anchorTag.style.display='none';
+				    }
+				});
+				
+				
+			}
+		
+			
+			
+			if($("#deleteAccess").val()==0){
+				$('.actionsImg').each(function(i, obj) {
+					if(obj.src.trim().includes("pageImg/delete.JPG") || obj.src.trim().includes("images/delete.png")){
+						obj.style.display='none';
+					}
+				});
+				
+				 
+				
+				
+			}
+			
+		
+		} 
+		
+		function compareValues(val1,val2){
+			return val1.trim().toUpperCase() === val2.trim().toUpperCase();
+		}
+	
+	function getConfirmation(num){
+    	if(num == 2){
+       var retVal  =  confirm("Do you want to Cancel ?");
+    	}
+    	if(num == 1){
+    		var retVal  =  confirm("Do you want to Go Back ?");
+    	}
+       if( retVal == true ){
+    	   history.go(-1);
+           return false;
+       }
     }
-}
-</style>
+	
+	 $(".alert").on("click",".close", function(e){
+		 document
+			.getElementById("mastajxerr").style.display = "none"; 
+	 });
+	
+	 
+	 $(function() {
+		 $('.txtBox').on('blur',function() {
+		        this.value = this.value.toLocaleUpperCase();
+		    });
+		    
+		   /*  $('textarea').on('blur', function() {
+		        this.value = this.value.toLocaleUpperCase();
+		    }); */
+		});
+	 function getDecimalValue(value)
+	{
+		 actual = Math.trunc(value); 
+		 return Number((value-actual).toFixed(2));
+	}
+	 $(document).ready(function(){
+			$('.indianFormat2').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(!$.isNumeric(monetary_value)){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if($.isNumeric(a)){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 2,
+	                	minimumFractionDigits: 2,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		 $(document).ready(function(){
+			$('.indianFormat4').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 4,
+	                	minimumFractionDigits: 4,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		$(document).ready(function(){
+			$('.indianFormat3').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 3,
+	                	minimumFractionDigits: 3,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		})
+		
+		$(document).ready(function(){
+			$('.indianFormat0').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(!$.isNumeric(monetary_value)){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if($.isNumeric(a)){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 0,
+	                	minimumFractionDigits: 0,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		});
+	 
+		$(document).ready(function(){
+			$('.indianFormat1').each(function() { 
+	            var monetary_value = $(this).html();
+	            if(monetary_value==''){
+	         	   monetary_value=0;
+	            }
+	            var a =parseFloat(monetary_value);
+	            if(isNaN(a)==false){
+	            	var i = new Intl.NumberFormat('en-IN', {
+	                	maximumFractionDigits: 1,
+	                	minimumFractionDigits: 1,
+	                    currency: 'INR'
+	                   	/* style: 'currency' */ /* for currency symbol */
+	                }).format(a); 
+	                $(this).html(i);
+	            }
+	        }); 
+		});
+	 function numberFormater(amount,divId,appendP,maximumFractionDigits_var,minimumFractionDigits_var){
+			var convertedVal = 0;
+			if($.isNumeric(amount)){
+				convertedVal =	amount.toLocaleString('en-IN', {
+			    maximumFractionDigits: maximumFractionDigits_var,minimumFractionDigits: minimumFractionDigits_var
+			});
+			}
+			document.getElementById(divId).innerHTML = convertedVal;
+		}
+	 function checkNumberValue(checkNumber){
+		 	if(checkNumber!=null){
+		 		return $.isNumeric(parseFloat(checkNumber)) ? parseFloat(checkNumber) : 0;	
+		 	}else{
+		 		return 0;
+		 	}
+			
+		} 
+	 
+	 function getDecimalValue(inputId,noOfDecimals){
+		 var value=$(inputId).val();
+		 if($.isNumeric(value)){
+			 value=decimalRound(value,noOfDecimals);
+		 }
+		 $(inputId).val(value);
+		}
+	 
+	 function decimalRound(num,scale){
+			if($.isNumeric(num)){
+				if(!("" + num).includes("e")) {
+				    return +(Math.round(num + "e+" + scale)  + "e-" + scale);
+				  } else {
+				    var arr = ("" + num).split("e");
+				    var sig = ""
+				    if(+arr[1] + scale > 0) {
+				      sig = "+";
+				    }
+				    return +(Math.round(+arr[0] + "e" + sig + (+arr[1] + scale)) + "e-" + scale);
+				  }
+		 	}else{
+		 		return parseFloat(0).toFixed(scale);
+		 	}
+		} 
+	 function decimalRoundoff(num)
+	 {
+		
+		 if(num!=null)
+		 {
+			 if(Math.round((parseFloat(num)%0.2)*100) %2 !=0)
+		    	{
+				 return num=num+0.01;
+		    	}
+			 else{
+				 return num;
+			 }
+		 }
+		 else {
+			 return 0;
+		 }
+	 }
+	 
+	 
+	 
+
+
+
+	</script>
+
 
 </head>
-
 <body>
+	
+	
+
+
+<nav class="navbar navbar-default headerColor" role="navigation">
+	<div class="navbar-header menuItemsCss">
+		<button type="button" class="navbar-toggle" data-toggle="collapse"
+			data-target="#example-navbar-collapse">
+			<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
+			<span class="icon-bar"></span> <span class="icon-bar"></span>
+		</button>
+		<img
+			src="/iTexCloudHSTNProd/resources/images/i2tex_logo.png"
+			class="logo" /></div>
+			
+			 
+			 <div class="col-sm-2" style="margin-top: 20px;margin-left: 150px;">
+				
+				<select style="margin-left: -80px;!important" id="clientId"
+						name="clientId" onchange="setCompanyAndFinYearToSession()">
+						<option value="">Select
+							Company
+						</option>
+						
+							<option value="1"
+								>HST EXPORTS PRIVATE LIMITED - SEZ DIVISION</option>
+						
+							<option value="2"
+								>HST EXPORTS PVT LTD-DOMESTIC DIVISION</option>
+						
+							<option value="3"
+								selected="selected">LISMOUNT TEX INDIA LLP</option>
+						
+					</select> 
+				
+			
+					</div>
+					
+					
+					
+				
+				
+				
+							
+							
+							
+				<div class="col-sm-1" style="margin-top: 20px;">
+					<label class="LoginLblTxt fontFamily">26-27</label>
+					
+				</div>
+				
+				
+				
+	
+
+	
+	<div class="collapse navbar-collapse" id="example-navbar-collapse">
+		<div class="img-with-text">
+			<a href="/iTexCloudHSTNProd/lgn/logoutUser"> <img
+				src="/iTexCloudHSTNProd/resources/images/logout.png"
+				width="50px"
+				style="float: right; margin-top: 17px; margin-right: 33px;"
+				title="Logout"></a>
+		</div>
+			<ul class='nav navbar-nav menuAlignment'><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>MASTERS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/getcertificatetypelist?pageNum=1'>Certification Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/commonConsigneeMlist?pageNum=1'>Consignee</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/salesorder/shademasterlist?pageNum=1'>Shade Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/store/displayStockTransferNewLIST?pageNum=1&itemType=1'>Stock Transfer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/categorymlist?pageNum=1'>Category</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/subcategorymlist?pageNum=1'>Sub Category</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/vendorlist?pageNum=1'>Vendor</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/getvendorgrouplist?pageNum=1'>Vendor Group</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/godownlocationlist?pageNum=1'>Godown Location</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/salesmastertypelist?pageNum=1'>Sales Master Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/gstlist?pageNum=1'>GST</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/copartlist?pageNum=1'>CoPart</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/contractTypeList?pageNum=1'>Contract Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/agentmlist?pageNum=1'>Agent</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/transportationMlist?pageNum=1'>Transportation</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/displayloomm?pageNum=1'>Loom</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/common/loomTypeList?pageNum=1'>Loom Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/deliverytermsmlist?pageNum=1'>Delivery Terms </a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/inspectionTypeMlist?pageNum=1'>Inspection Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/packingtypemlist?pageNum=1'>Packing Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/millMasterlist?pageNum=1'>Mill Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/sort/srsortmasterlist?isexport=1&pageNum=1'>Quality</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/countrylist?pageNum=1'>Country</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/paymenttermsmlist?pageNum=1'>Payment Terms</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/showRateMasterList'>Rate</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/citymlist?pageNum=1'>City</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>EXPORT<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/buyermlist?buyerTypeStr=1&pageNum=1'>Export Buyer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/salesorder/salesorderlist?state=1&moveToProduction=0'>Export Sales Order</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/export/exportgenerateinvoicelist'>Packing List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/export/invoicelist?pageNum=1'>Export Invoice List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/export/diplaybillofexchangelist?pageNum=1'>Bill Of Exchange</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/export/getforwarderlist?pageNum=1'>Forwarder</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/packagingacceptregionList?pageNum=1'>Packaging Accept Reason</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/licensemlist?pageNum=1'>Licence</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/precarriageboymlist?pageNum=1'>Pre-Carriage by</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/portCodeList?pageNum=1'>Port</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/exportDiscountingBanks'>Export Discount Bank</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/export/selfsealingexportpage'>Self Sealing Export</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>DOMESTIC<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/buyermlist?buyerTypeStr=2&pageNum=1'>Domestic Buyer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/salesorder/domesticsalesorderlist?state=1&moveToProduction=0'>Sales Order </a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/contractTypeList?pageNum=1'>Contract Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/domesticsalesorder/domesticpackinglist?pageNum=1'>Challan List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/domesticsalesorder/domesticinvoicelist?flow=invoice&pageNum=1'>Domestic Invoice List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/salesorder/yarncontractlist?pageNum=1'>Yarn Sales Contract</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/domesticsalesorder/yarnsalescontractlist?pageNum=1'>Yarn Challan</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/domesticsalesorder/yarninvoicelist?pageNum=1'>Yarn Invoice List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/domesticsalesorder/yarninvoicelist?pageNum=1&eInvoice=1'>Yarn e-invoice List </a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/domesticsalesorder/yarnSalesReturn?pageNum=1'>Yarn Sales Return List</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>APPROVAL<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/approval/domesticSalesOrderApprovalAdd?state=1&productionFor=1'>Export-So</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/approval/domesticSalesOrderApprovalAdd?state=1&productionFor=2'>So-Domestic</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/approval/displayfabricpoapproval?pageNum=1'>Po-Fabric Purchase</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/approval/displayjobworkapproval?isReset=0'>Po-Fabric Processing Jw</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/approval/displayYarnpoapproval?pageNum=1'>PO-Yarn</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN MASTER<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/fabricmaster/fabriccountlist?pageNum=1'>Count</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/fabricmaster/fabricplylist?pageNum=1'>Ply</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/uommlist?pageNum=1'>UOM</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/millMasterlist?pageNum=1'>Mill Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/yarnvarietylist?pageNum=1'>Yarn Variety</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/getyarntypelist?pageNum=1'>Yarn Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/getyarnlist?pageNum=1'>Yarn</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/tpmlist?pageNum=1'>TPM</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>Stock<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/store/yarninwardlist?pageNum=1&dcOrInvoice=1&itemType=1&isOpeningBalance=0'>Yarn Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/production/fabricInwardListpage?isOpeningBalance=0'>Fabric Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/store/yarninwardlist?pageNum=1&dcOrInvoice=1&itemType=1&isOpeningBalance=1'>Yarn Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/production/fabricOpenBalanceInwardListpage?isOpeningBalance=1'>Fabric Opening Balance</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/production/returningYarn'>Yarn Return</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PURCHASE<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/pur/displayyarnpO?pageNum=1'>Yarn PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/pur/displayfabricpO?pageNum=1'>Fabric PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/item/itemlist?pageNum=1'>Item</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/item/itempurchaserequisitionlist?prStatus=0'>Item Purchase Requisition</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/item/itempolist?pageNum=1'>Item PO</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/item/iteminwardlist?pageNum=1&isOpeningBalance=0'>Item Inward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/item/itemtransferlist?pageNum=1'>Item Transfer</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/item/itemoutwardlist?pageNum=1'>Item Outward</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/item/receivereturnitemlist?pageNum=1'>Item Receive Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/item/itemreturnlist?pageNum=1'>Item Return</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/item/iteminoutreport?pageNum=1'>Item IN OUT Report</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>SORT CREATION<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/common/loomTypeList?pageNum=1'>Loom Type</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/selvedgeMasterlist?pageNum=1'>Selvedge Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/setsingledoublelist?pageNum=1'>Set Single Double</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/fabricmaster/Sheddingmechlist?pageNum=1'>Weave</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/sort/sortmasterlist?pageNum=1'>Sort Master</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/store/editinspection'>Inspection Edit New</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PLANNING<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/pur/getpurchaserequistionnewlist?pageNum=1'>Yarn Purchase Requisition</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/production/orderList?pageNum=1'>Order List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexCloudHSTNProd/sort/yarnProcessingContractList?pageNum=1'>Yarn Process Contract</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/yarnProcessingContractPeiceIssueList?pageNum=1'>Yarn Processing Issue</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/receiveYarnProcessingContractList?pageNum=1'>Yarn Processing Receive</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/yarnProcessReturnList?pageNum=1'>Yarn Process Return</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>SIZING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexCloudHSTNProd/sort/getsizingsetlistnew?pageNum=1'>Sizing Plan</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/sizingsetjobworklist?pageNum=1&state=1'>Sizing Yarn Issue</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/beaminwardlist'>Beam Inward</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/beamoutwardlist?productionType=0'>Beam Outward</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/beamBalanceAtWeaverList'>Beam Opening Balance</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/jobworkweftbottomreceivelist?pageNum=1'>Bottom Receive Outside</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/internalweftbottomreceivelist?pageNum=1'>Internal Bottom Receive</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>WEAVING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexCloudHSTNProd/sort/jobworkweavingcontractlistnew'>Job work Weaving Contract</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/jobworkweftcontractlist'>Job work Weaving Weft Issue</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/beamreceivefromweaver1'>Beam Receive From Weaver</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>FABRIC PROCESSING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexCloudHSTNProd/sort/jobworkprocesscontractlist?statusType=1'>Jobwork Process Contract</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/jobworkprocesspiecedetailslist?pageNum=1'>Jobwork Process Contract Issue</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/finshedfabricreceiveList?isOpeningBalance=0'>Jobwork Finished Fabric Receive</a></li><li class='divider'></li></ul></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>Warehouse<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/productionnew/fabricInspectionPieceDetailsNewList?isOpeningBalance=0&rd=0&fabricType=1'>Job work Fabric Receive</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>PACKING<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexCloudHSTNProd/sort/balePackingList?pageNum=1'>Bale Packing</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/clothchallanList?pageNum=1'>Cloth Challan</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/factory/piecesplitlistpage'>Piece Split</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/piecejoinlist?pageNum=1'>Piece Join</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>RETURN<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexCloudHSTNProd/production/salesReturnList?pageNum=1'>Sales Retrun</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/processReturnList?pageNum=1'>Process Return</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/pur/purchaseFabricReturnList?pageNum=1'>Purchase Return</a></li><li class='divider'></li></ul></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>Others<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/mt/inspectionlistnew?pageNum=1'>Inspection List</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/store/yarnreceivefrpartytoloclist'>Party To Location</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/cost/costinglist?pageNum=1'>Costing</a></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/sort/rollOrBalePrintList?'>Roll / Bale Print Page</a></li><li class='divider'></li></ul></li><li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>REPORTS<b class='caret'></b></a><ul class='dropdown-menu'><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>YARN REPORTS<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexCloudHSTNProd/sort/weftreqreport'>Weft Requirement Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/weftissuereport'>Weft Issue Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/yarntoweftregisterreportlist?issueType=1'>Yarn To Sizing Register Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/storesstockinwardreportlist'>Stock Inward Yarn Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/getOBCBReport'>Yarn Opening And Closing Balance Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/SizingReconciliationReportList?pageNum=1'>Sizing Reconciliation Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/stockinwardyarngraph'>Stock Inward Yarn Graph</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/locationWiseYarnStockReport?pageNum=1'>Location Wise Yarn Stock Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/yarnEntryInOutReport?pageNum=1'>Count Entry Wise In-Out Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/yarnInvoiceReport?pageNum=1'>Yarn Invoice Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>FABRIC REPORTS<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexCloudHSTNProd/sort/fabricreportnew?'>Warehouse Stock Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/fabricreport?pageNum=1'>Fabric Waiting for Packing</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/mt/uncheckedreport?pageNum=1'>Unchecked Fabric Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/piecebalestock'>Piece And Bale Stock Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/piecejoinreport'>Piece Join Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/fabricinventory?state=1'>Inventory Fabric</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/sort/qualityinventoryfabric'>Quality Wise Inventory Fabric</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/qualityfabricoutwardRePort?pageNum=1'>Quality Wise Fabric Outward Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/fabricoutwardRePort?pageNum=1'>Fabric Outward Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/fabricinwardreport?listType=1'>Jobwork Fabric Inward Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/fabricinwardreport?listType=3'>Purchase Fabric Inward Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/packedFabricPendingForDispatch'>Packing Ready For Dispatch</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/fabricobcbreport?state=1'>Fabric OBCB Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/YAndNReport?isCompleted=1'>PieceWise Dispatched Details Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/production/YAndNReport?isCompleted=0'>Piecewise Available Details Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/domesticsalesorder/fabricInOutRpt'>Fabric In Out Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>STATUS REPORTS<b class='caret'></b></a><ul class='dropdown-menu1'><li ><a href='/iTexCloudHSTNProd/salesorder/exportoutstandinglist1?productionFor=1'>Export Outstanding Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/exportoutstandinglistnew'>Export Outstanding Report New</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/salesorderstatusview?productionFor=2&listType=1'>Domestic Order Status (GREIGE)</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/salesorderstatusview?productionFor=1&listType=1'>Export Order Status (GREIGE)</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/salesfinishedorderstatusview?productionFor=2&listType=1'>Domestic Order Status (FINISHED)</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/salesfinishedorderstatusview?productionFor=1&listType=1'>Export Oder Status (FINISHED)</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/purchasestatusviewNew'>Fabric PO Status (PURCHASE) Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/fabricpostatusjobworkNew?state=1'>Fabric PO Status (JOBWORK) Report</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/sostatus?state=1&productionFor=2'>SO Status</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/soosstatus?state=1&productionFor=2'>SO OS</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/store/yarnPoStatusReport'>Yarn PO Status</a></li><li class='divider'></li><li ><a href='/iTexCloudHSTNProd/salesorder/orderstatusview'>Order Status Report</a></li><li class='divider'></li></ul></li><li class='divider'></li><li class='dropdown-submenu'><a href='/iTexCloudHSTNProd/dash/dashBoard'>Dashboard</a></li><li class='divider'></li></ul></li></ul>
+	</div>
+</nav>
+
 
 <div class="container">
-
-    <div class="header">ESPRIT</div>
-    <div class="title">COTTON SHEETING FABRICS LAB DIP FOR APPROVAL</div>
-
-    <table>
-        <tr>
-            <td class="label">Buyer Name</td>
-            <td><input type="text"></td>
-        </tr>
-        <tr>
-            <td class="label">Supplier</td>
-            <td><input type="text"></td>
-        </tr>
-        <tr>
-            <td class="label">Quality</td>
-            <td><input type="text"></td>
-        </tr>
-        <tr>
-            <td class="label">Colour</td>
-            <td><input type="text"></td>
-        </tr>
-        <tr>
-            <td class="label">Date</td>
-            <td><input type="date"></td>
-        </tr>
-    </table>
-
-    <div class="box-area">
-        <div class="box"><span>Lab Dip - A</span></div>
-        <div class="box"><span>Lab Dip - B</span></div>
-        <div class="box"><span>Lab Dip - C</span></div>
-        <div class="box"><span>Lab Dip - D</span></div>
-        <div class="box"><span>Lab Dip - E</span></div>
-        <div class="box"><span>Lab Dip - F</span></div>
-    </div>
-
-    <div class="footer">
-        <div>Checked By: <input type="text" style="width:120px;"></div>
-        
-        <div>
-            <label><input type="radio" name="status"> <span class="approved">Approved</span></label>
-            <label><input type="radio" name="status"> <span class="rejected">Rejected</span></label>
-        </div>
-
-        <div>
-            Remarks:<br>
-            <textarea></textarea>
-        </div>
-    </div>
-
+	
+	
+	
+	<div class="alert alert-danger alert-dismissable fade in"
+		id="mastajxerr" style="display: none">
+		<a href="#" class="close"  onclick="$('#mastajxerr').hide();" aria-label="close">&times;</a>
+		<strong id="errorMsgContent">Error! </strong> <span id="ajaxerror"></span>
+	</div>
+	<div class="alert alert-danger alert-dismissable fade in"
+		id="mastajxerrb" style="display: none">
+		<a href="#" class="close" onclick="$('#mastajxerrb').hide();" aria-label="close">&times;</a>
+		<strong id="errorMsgContent">Error! </strong> <span id="ajaxerrorb"></span>
+	</div>
+	<div class="alert alert-info alert-dismissable fade in"
+		id="status1" style="display: none">
+		<a href="#" class="close"  onclick="$('#status1').hide();" aria-label="close">&times;</a>
+		<strong >Info! </strong> <span id="info"></span>
+	</div>
 </div>
+	
+	<script type="text/javascript">
+	$(".alert").on("click",".close", function(e){
+		 document
+			.getElementById("mastajxerr").style.display = "none"; 
+	 });
+</script>
 
+<style>
+.dropdown-menu1 {
+	display: none;
+	min-width: 160px;
+	top-margin: 20px;
+	padding: 0px;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	
+}
+
+.dropdown-menu1 .divider {
+	height: 1px;
+	margin: 9px 0;
+	overflow: hidden;
+	background-color: #e5e5e5
+}
+
+.dropdown-menu1>li>a {
+	display: block;
+	padding: 0px 80px;
+	clear: both;
+	font-weight: 400;
+	color: white;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.dropdown-submenu {
+	display: block;
+	position: relative;
+	height: 30px;
+}
+
+.dropdown-submenu:hover .dropdown-menu1 {
+	top: 0%;
+	right: 100%;
+	margin-top: -20px;
+	margin-left: 5px;
+	background-color: #1d1d1d;
+	display: inline-block;
+	position: relative;
+	visibility: visible;
+}
+
+.dropdown-submenu .dropdown-menu1 {
+	display: none;
+	position: absolute;
+	visibility: hidden;
+}
+
+.glyphicon glyphicon-play {
+	width: 20px;
+	height: 20px;
+}
+
+.dropdown-menu2 {
+	display: none;
+	min-width: 160px;
+	top-margin: 20px;
+	padding: 0px;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	height: auto;
+}
+
+.dropdown-menu2 .divider {
+	height: 1px;
+	margin: 9px 0;
+	overflow: hidden;
+	background-color: #e5e5e5
+}
+
+.dropdown-menu2>li>a {
+	display: block;
+	padding: 2px 10px;
+	clear: both;
+	font-weight: 400;
+	line-height: 1.42857143;
+	color: white;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.dropdown-submenu:hover .dropdown-menu2 {
+	top: 0%;
+	right: 100%;
+	margin-top: -20px;
+	margin-left: -45px;
+	background-color: #6f1c17;
+	display: inline-block;
+	position: relative;
+	visibility: visible;
+}
+
+.dropdown-submenu .dropdown-menu2 {
+	display: none;
+	position: absolute;
+	visibility: hidden;
+}
+</style>
+<script type="text/javascript">
+	function setCompanyAndFinYearToSession() {
+		var companyId = $('#clientId').val();
+		var finYearId = $('#financialYearId').val();
+		var url      = location.href;
+		$.ajax({
+			dataType : 'json',
+			type : "Post",
+			url : "/iTexCloudHSTNProd/fas/updatesession",
+			data : {
+				'companyId' : companyId,
+				'finYearId' : finYearId,
+				'pathName' : url
+			},
+			success : function(response) {
+				location.href=response.path;
+				
+			}
+
+		});
+
+	}
+</script>
+		Dashboard	
+	
+
+
+
+
+	
+
+<!-- single user login -->
+
+<!-- single user login -->
 </body>
+
+</script>
 </html>
