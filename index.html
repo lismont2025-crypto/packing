@@ -2,69 +2,140 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Packing - Lismount Tex ERP</title>
-<link rel="stylesheet" href="style.css">
+<title>Lab Dip Approval</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        width: 700px;
+        margin: 20px auto;
+        border: 2px solid #000;
+        padding: 10px;
+        background: #fff;
+    }
+
+    .header {
+        text-align: center;
+        font-weight: bold;
+        font-size: 22px;
+        color: red;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+    }
+
+    td {
+        border: 1px solid #000;
+        padding: 5px;
+        font-size: 12px;
+    }
+
+    .label {
+        background-color: orange;
+        font-weight: bold;
+        width: 30%;
+    }
+
+    .box-area {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 150px);
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .box {
+        border: 1px solid #000;
+        position: relative;
+    }
+
+    .box span {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        font-size: 11px;
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 12px;
+    }
+
+    .approved {
+        color: green;
+        font-weight: bold;
+    }
+
+    .rejected {
+        color: red;
+        font-weight: bold;
+    }
+</style>
 </head>
+
 <body>
 
-<header>
-Packing List - Lismount Tex ERP
-</header>
+<div class="container">
 
-<nav>
-<a href="index.html">Dashboard</a>
-<a href="stock.html">Fabric Stock</a>
-<a href="packing.html">Packing</a>
-<a href="customer.html">Customer DB</a>
-</nav>
+    <div class="header">ESPRIT</div>
+    <div class="title">COTTON SHEETING FABRICS LAB DIP FOR APPROVAL</div>
 
-<div class="section">
-<h2>Create Packing Entry</h2>
+    <table>
+        <tr>
+            <td class="label">Buyer Name</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="label">Supplier</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="label">Quality</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="label">Colour</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="label">Date</td>
+            <td></td>
+        </tr>
+    </table>
 
-Customer: <input type="text" id="customer" placeholder="Customer Name"><br><br>
-Fabric Type: <input type="text" id="fabric" placeholder="Fabric Type"><br><br>
-Quantity (Meters): <input type="number" id="quantity" placeholder="Quantity"><br><br>
-<button onclick="addPacking()">Add Packing</button>
+    <div class="box-area">
+        <div class="box"><span>Lab Dip - A</span></div>
+        <div class="box"><span>Lab Dip - B</span></div>
+        <div class="box"><span>Lab Dip - C</span></div>
+        <div class="box"><span>Lab Dip - D</span></div>
+        <div class="box"><span>Lab Dip - E</span></div>
+        <div class="box"><span>Lab Dip - F</span></div>
+    </div>
 
-<h3>Recent Packing Entries</h3>
-<table border="1" cellpadding="10" style="margin:auto; border-collapse:collapse; width:80%;" id="packing-table">
-<tr>
-<th>Challan No</th>
-<th>Customer</th>
-<th>Fabric</th>
-<th>Quantity</th>
-<th>Date</th>
-</tr>
-</table>
+    <div class="footer">
+        <div>Checked By:</div>
+        <div>
+            <span class="approved">Approved</span> /
+            <span class="rejected">Rejected</span>
+        </div>
+        <div>Remarks:</div>
+    </div>
+
 </div>
-
-<script>
-let challanNo=1;
-
-function addPacking(){
-    let customer=document.getElementById("customer").value;
-    let fabric=document.getElementById("fabric").value;
-    let quantity=document.getElementById("quantity").value;
-
-    if(customer && fabric && quantity){
-        let table=document.getElementById("packing-table");
-        let row=table.insertRow(-1);
-        row.insertCell(0).innerText=challanNo++;
-        row.insertCell(1).innerText=customer;
-        row.insertCell(2).innerText=fabric;
-        row.insertCell(3).innerText=quantity;
-        row.insertCell(4).innerText=new Date().toLocaleDateString();
-
-        // clear inputs
-        document.getElementById("customer").value="";
-        document.getElementById("fabric").value="";
-        document.getElementById("quantity").value="";
-    } else {
-        alert("Please fill all fields");
-    }
-}
-</script>
 
 </body>
 </html>
