@@ -4,22 +4,17 @@
 <meta charset="UTF-8">
 <title>Lab Dip Approval</title>
 
-<style>
-@page {
-    size: A4;
-    margin: 10mm;
-}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-body {
-    font-family: Arial, sans-serif;
-}
+<style>
+@page { size: A4; margin: 10mm; }
+
+body { font-family: Arial; }
 
 .container {
-    width: 100%;
-    height: 100%;
     border: 2px solid black;
     padding: 10px;
-    box-sizing: border-box;
 }
 
 .header {
@@ -55,7 +50,6 @@ td {
 input {
     width: 100%;
     border: none;
-    outline: none;
 }
 
 .box-area {
@@ -69,6 +63,12 @@ input {
 .box {
     border: 1px solid black;
     position: relative;
+    text-align: center;
+}
+
+.box img {
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .box span {
@@ -81,31 +81,32 @@ input {
 .footer {
     display: flex;
     justify-content: space-between;
-    margin-top: 15px;
-    font-size: 12px;
+    margin-top: 10px;
 }
 
-.approved { color: green; font-weight: bold; }
-.rejected { color: red; font-weight: bold; }
-
-textarea {
-    width: 200px;
+.logo {
     height: 40px;
-    border: 1px solid black;
 }
 
-@media print {
-    input, textarea {
-        border: none;
-    }
+.controls {
+    margin-bottom: 10px;
 }
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
+<div class="controls">
+    📂 Excel Upload: <input type="file" onchange="loadExcel(event)">
+    🖼 Logo Upload: <input type="file" onchange="loadLogo(event)">
+    📥 PDF Download: <button onclick="downloadPDF()">Download</button>
+</div>
+
+<div class="container" id="printArea">
+
+    <div style="text-align:center">
+        <img id="logo" class="logo">
+    </div>
 
     <div class="header">ESPRIT</div>
     <div class="title">COTTON SHEETING FABRICS LAB DIP FOR APPROVAL</div>
@@ -113,50 +114,114 @@ textarea {
     <table>
         <tr>
             <td class="label">Buyer Name</td>
-            <td><input type="text"></td>
+            <td><input id="buyer"></td>
         </tr>
         <tr>
             <td class="label">Supplier</td>
-            <td><input type="text"></td>
+            <td><input id="supplier"></td>
         </tr>
         <tr>
             <td class="label">Quality</td>
-            <td><input type="text"></td>
+            <td><input id="quality"></td>
         </tr>
         <tr>
             <td class="label">Colour</td>
-            <td><input type="text"></td>
+            <td><input id="color"></td>
         </tr>
         <tr>
             <td class="label">Date</td>
-            <td><input type="date"></td>
+            <td><input type="date" id="date"></td>
         </tr>
     </table>
 
     <div class="box-area">
-        <div class="box"><span>Lab Dip - A</span></div>
-        <div class="box"><span>Lab Dip - B</span></div>
-        <div class="box"><span>Lab Dip - C</span></div>
-        <div class="box"><span>Lab Dip - D</span></div>
-        <div class="box"><span>Lab Dip - E</span></div>
-        <div class="box"><span>Lab Dip - F</span></div>
+        <div class="box" onclick="uploadImage(0)">
+            <img id="img0"><span>Lab Dip - A</span>
+        </div>
+        <div class="box" onclick="uploadImage(1)">
+            <img id="img1"><span>Lab Dip - B</span>
+        </div>
+        <div class="box" onclick="uploadImage(2)">
+            <img id="img2"><span>Lab Dip - C</span>
+        </div>
+        <div class="box" onclick="uploadImage(3)">
+            <img id="img3"><span>Lab Dip - D</span>
+        </div>
+        <div class="box" onclick="uploadImage(4)">
+            <img id="img4"><span>Lab Dip - E</span>
+        </div>
+        <div class="box" onclick="uploadImage(5)">
+            <img id="img5"><span>Lab Dip - F</span>
+        </div>
     </div>
 
     <div class="footer">
-        <div>Checked By: <input type="text" style="width:120px;"></div>
-        
+        <div>Checked By: <input></div>
         <div>
-            <label><input type="radio" name="status"> <span class="approved">Approved</span></label>
-            <label><input type="radio" name="status"> <span class="rejected">Rejected</span></label>
+            <label><input type="radio" name="status"> Approved</label>
+            <label><input type="radio" name="status"> Rejected</label>
         </div>
-
-        <div>
-            Remarks:<br>
-            <textarea></textarea>
-        </div>
+        <div>Remarks: <input></div>
     </div>
 
 </div>
+
+<script>
+
+// Excel Auto Fill
+function loadExcel(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet);
+
+        const row = json[0];
+
+        document.getElementById('buyer').value = row["Buyer Name"] || "";
+        document.getElementById('supplier').value = row["Supplier"] || "";
+        document.getElementById('quality').value = row["Quality"] || "";
+        document.getElementById('color').value = row["Colour"] || "";
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+
+// Logo Upload
+function loadLogo(event) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('logo').src = e.target.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+// Lab Dip Image Upload
+function uploadImage(index) {
+    const input = document.createElement('input');
+    input.type = 'file';
+
+    input.onchange = e => {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            document.getElementById('img' + index).src = ev.target.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    };
+
+    input.click();
+}
+
+// PDF Download
+function downloadPDF() {
+    const element = document.getElementById('printArea');
+    html2pdf().from(element).save("LabDip.pdf");
+}
+
+</script>
 
 </body>
 </html>
