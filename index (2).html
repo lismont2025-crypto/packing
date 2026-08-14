@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fabric Inspection Report System</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{
+  --navy:#1c2b3a; --navy-2:#25384b; --steel:#4a6478; --paper:#f6f4ee;
+  --line:#c9c2b2; --accent:#a4693d; --accent-2:#7d8f6e; --ink:#20241f;
+  --ok:#4f7a5a; --bad:#a1473f; --gold:#b98c4a;
+  --sidebar-w:220px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:'Georgia','Times New Roman',serif;}
+body{display:flex;min-height:100vh;}
+::-webkit-scrollbar{height:10px;width:10px;}
+::-webkit-scrollbar-thumb{background:#c3b9a3;border-radius:6px;}
+
+/* ---------- Sidebar ---------- */
+#sidebar{
+  width:var(--sidebar-w); flex-shrink:0; background:linear-gradient(180deg,var(--navy),var(--navy-2));
+  color:#e7e1d3; padding:18px 14px; position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+#sidebar h1{font-size:15px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 2px;font-weight:700;color:#fff;}
+#sidebar .sub{font-size:10.5px;color:#a9b6c2;margin-bottom:18px;letter-spacing:.03em;}
+.nav-item{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:6px;cursor:pointer;
+  font-size:12.5px;color:#cdd6dc;margin-bottom:2px;transition:.15s;border:1px solid transparent;
+}
+.nav-item:hover{background:rgba(255,255,255,.06);}
+.nav-item.active{background:rgba(180,140,74,.18);border-color:rgba(180,140,74,.5);color:#f1e4c8;}
+.nav-item .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:0;}
+.nav-item.active .dot{opacity:1;}
+.nav-section{font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;color:#7f8fa0;margin:16px 4px 6px;}
+#autosave-indicator{font-size:10px;color:#8fae95;margin-top:16px;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:6px;}
+
+/* ---------- Main ---------- */
+#main{flex:1;min-width:0;padding:20px 26px 60px;}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+.topbar h2{margin:0;font-size:19px;color:var(--navy);letter-spacing:.01em;}
+.topbar .meta{font-size:11px;color:var(--steel);margin-top:3px;}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;}
+button.btn{
+  font-family:'Segoe UI',system-ui,sans-serif; font-size:11.5px; font-weight:600; letter-spacing:.02em;
+  padding:8px 13px;border-radius:5px;border:1px solid var(--line);background:#fff;color:var(--navy);
+  cursor:pointer; transition:.12s; white-space:nowrap;
+}
+button.btn:hover{background:#f0ece0;border-color:var(--steel);}
+button.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+button.btn.primary:hover{background:var(--navy-2);}
+button.btn.accent{background:var(--accent);color:#fff;border-color:var(--accent);}
+button.btn.accent:hover{background:#8a5530;}
+button.btn.ghost{background:transparent;}
+button.btn.danger{color:var(--bad);border-color:#dcc3bf;}
+button.btn.danger:hover{background:#fbeceb;}
+button.btn:disabled{opacity:.45;cursor:not-allowed;}
+button.btn.small{padding:4px 8px;font-size:10.5px;}
+input[type=file]{display:none;}
+
+.panel{background:#fffdf9;border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+.panel h3{margin:0 0 12px;font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-family:'Segoe UI',sans-serif;font-weight:700;}
+label.small{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--steel);margin-bottom:3px;font-family:'Segoe UI',sans-serif;}
+.field-input{width:100%;border:1px solid var(--line);border-radius:4px;padding:6px 8px;font-size:12.5px;font-family:inherit;background:#fff;color:var(--ink);}
+.field-input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent);}
+.grid{display:grid;gap:10px;}
+.grid-6{grid-template-columns:repeat(6,1fr);}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+@media(max-width:1000px){.grid-6{grid-template-columns:repeat(3,1fr);}.grid-4{grid-template-columns:repeat(2,1fr);}}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;}
+table.report{border-collapse:collapse;width:100%;font-size:11px;min-width:1400px;}
+table.report th{background:var(--navy);color:#f1ece0;font-weight:600;padding:6px 5px;border:1px solid #33475a;position:sticky;top:0;font-family:'Segoe UI',sans-serif;font-size:9.5px;text-transform:uppercase;letter-spacing:.03em;}
+table.report td{border:1px solid var(--line);padding:2px;text-align:center;}
+table.report td input,table.report td select{
+  width:100%;border:none;background:transparent;text-align:center;font-size:11px;padding:5px 2px;font-family:inherit;color:var(--ink);
+}
+table.report td input:focus,table.report td select:focus{outline:2px solid var(--accent);background:#fff8ec;}
+table.report tr:nth-child(even){background:#faf8f2;}
+table.report td.readonly{background:#f0ede4;color:var(--steel);font-weight:600;}
+table.report td.grade-pass{color:var(--ok);font-weight:700;}
+table.report td.grade-fail{color:var(--bad);font-weight:700;}
+table.report tr.total-row td{background:var(--navy);color:#fff;font-weight:700;}
+.row-actions{display:flex;gap:3px;justify-content:center;}
+.icon-btn{border:none;background:transparent;cursor:pointer;font-size:13px;padding:2px 4px;border-radius:3px;color:var(--steel);}
+.icon-btn:hover{background:#e9e3d4;color:var(--bad);}
+
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:900px){.summary-grid{grid-template-columns:repeat(2,1fr);}}
+.sum-card{background:#faf7f0;border:1px solid var(--line);border-radius:6px;padding:9px 11px;}
+.sum-card label{font-size:9px;}
+.sum-card .val{font-size:15px;font-weight:700;color:var(--navy);margin-top:2px;font-family:'Segoe UI',sans-serif;}
+.sum-card.computed{background:#eef3ea;}
+.sum-card.computed .val{color:var(--accent-2);}
+.sum-card.warn .val{color:var(--bad);}
+
+.hidden{display:none !important;}
+.hint{font-size:10.5px;color:var(--steel);font-family:'Segoe UI',sans-serif;line-height:1.5;}
+.hint b{color:var(--ink);}
+.formula-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap;}
+.formula-row .fname{width:170px;font-size:11px;font-weight:600;flex-shrink:0;font-family:'Segoe UI',sans-serif;}
+.formula-row input{flex:1;min-width:220px;font-family:'Consolas',monospace;font-size:12px;}
+.formula-row .fdesc{font-size:10px;color:var(--steel);width:100%;font-family:'Segoe UI',sans-serif;margin-top:2px;}
+.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:9.5px;font-weight:700;font-family:'Segoe UI',sans-serif;}
+.badge.ok{background:#e2ede1;color:var(--ok);}
+.badge.err{background:#f5e2e0;color:var(--bad);}
+
+/* history */
+.hist-table{width:100%;border-collapse:collapse;font-size:12px;font-family:'Segoe UI',sans-serif;}
+.hist-table th{text-align:left;font-size:10px;text-transform:uppercase;color:var(--steel);border-bottom:2px solid var(--line);padding:8px 6px;}
+.hist-table td{padding:8px 6px;border-bottom:1px solid #eee6d5;}
+.hist-table tr:hover{background:#faf7ee;}
+.search-bar{display:flex;gap:8px;margin-bottom:12px;}
+.search-bar input{flex:1;}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(20,20,15,.55);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;}
+.modal{background:#fff;border-radius:8px;max-width:96vw;max-height:92vh;overflow:auto;padding:0;box-shadow:0 10px 40px rgba(0,0,0,.35);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line);background:#faf8f2;position:sticky;top:0;font-family:'Segoe UI',sans-serif;}
+.modal-head h4{margin:0;font-size:13px;color:var(--navy);}
+.modal-body{padding:18px;}
+
+/* ---- A4 preview sheet ---- */
+.a4-sheet{
+  background:#fff;width:1123px;min-height:794px;margin:0 auto;padding:26px 30px;
+  font-family:'Times New Roman',serif;color:#111;box-shadow:0 0 0 1px #ddd, 0 6px 20px rgba(0,0,0,.15);
+  transform-origin:top center;
+}
+.a4-sheet h1{text-align:center;font-size:22px;margin:0 0 6px;font-weight:700;}
+.a4-meta{display:flex;justify-content:space-between;font-size:10px;margin-bottom:6px;flex-wrap:wrap;gap:4px 18px;}
+table.pdf-tbl{border-collapse:collapse;width:100%;font-size:9px;margin-bottom:6px;}
+table.pdf-tbl th,table.pdf-tbl td{border:1px solid #333;padding:2px 3px;text-align:center;}
+table.pdf-tbl th{background:#e7e2d2;font-weight:700;}
+
+@media print{
+  body *{visibility:hidden;}
+  #print-area,#print-area *{visibility:visible;}
+  #print-area{position:absolute;left:0;top:0;width:100%;}
+  @page{size:A4 landscape;margin:8mm;}
+  .a4-sheet{box-shadow:none;width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h1>Lismount Tex</h1>
+  <div class="sub">Fabric Inspection System</div>
+
+  <div class="nav-section">Workspace</div>
+  <div class="nav-item active" data-view="dashboard"><span class="dot"></span>Dashboard</div>
+  <div class="nav-item" data-view="report"><span class="dot"></span>New / Edit Report</div>
+  <div class="nav-item" data-view="history"><span class="dot"></span>Report History</div>
+
+  <div class="nav-section">Data</div>
+  <div class="nav-item" data-view="import"><span class="dot"></span>Import Excel / PDF</div>
+  <div class="nav-item" data-view="templates"><span class="dot"></span>Templates</div>
+
+  <div class="nav-section">Configure</div>
+  <div class="nav-item" data-view="formulas"><span class="dot"></span>Formula Settings</div>
+  <div class="nav-item" data-view="settings"><span class="dot"></span>Settings</div>
+
+  <div id="autosave-indicator">● Autosaved locally<br><span id="autosave-time" style="opacity:.7"></span></div>
+</div>
+
+<div id="main">
+
+  <!-- DASHBOARD -->
+  <section id="view-dashboard">
+    <div class="topbar">
+      <div><h2>Dashboard</h2><div class="meta">Overview of saved fabric inspection reports</div></div>
+      <div class="btnrow"><button class="btn primary" onclick="go('report')">+ New Report</button></div>
+    </div>
+    <div class="summary-grid" id="dash-cards"></div>
+    <div class="panel" style="margin-top:16px;">
+      <h3>Recent Reports</h3>
+      <div id="dash-recent"></div>
+    </div>
+  </section>
+
+  <!-- REPORT EDITOR -->
+  <section id="view-report" class="hidden">
+    <div class="topbar">
+      <div><h2>Fabric Inspection Report</h2><div class="meta" id="report-filename-preview"></div></div>
+      <div class="btnrow">
+        <button class="btn ghost" onclick="newReport(true)">New</button>
+        <button class="btn ghost" onclick="saveReportToHistory()">Save</button>
+        <label class="btn ghost" style="margin:0;">Import Excel<input type="file" id="excelInput" accept=".xlsx,.xls"></label>
+        <label class="btn ghost" style="margin:0;">Import PDF<input type="file" id="pdfInput" accept=".pdf"></label>
+        <button class="btn ghost" onclick="openPreview()">PDF Preview</button>
+        <button class="btn accent" onclick="exportPDF()">Save as PDF</button>
+        <button class="btn accent" onclick="exportExcel()">Save as Excel</button>
+        <button class="btn ghost" onclick="window.print()">Print</button>
+        <button class="btn ghost" onclick="openSaveTemplate()">Save Template</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Report Header</h3>
+      <div class="grid grid-6">
+        <div><label class="small">Company Name</label><input class="field-input" id="f-company"></div>
+        <div><label class="small">Report Date</label><input class="field-input" type="date" id="f-date"></div>
+        <div><label class="small">Customer</label><input class="field-input" id="f-customer"></div>
+        <div><label class="small">Processing Unit</label><input class="field-input" id="f-unit"></div>
+        <div><label class="small">Quality</label><input class="field-input" id="f-quality"></div>
+        <div><label class="small">Shade / Colour</label><input class="field-input" id="f-shade"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h3 style="margin:0;">Roll-wise Inspection</h3>
+        <div class="btnrow">
+          <button class="btn small" onclick="addRow()">+ Add Row</button>
+          <button class="btn small ghost" onclick="addColumnPrompt()">+ Add Column</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="report" id="rollTable">
+          <thead><tr id="rollTableHead"></tr></thead>
+          <tbody id="rollTableBody"></tbody>
+        </table>
+      </div>
+      <div class="hint" style="margin-top:6px;"><b>Auto-calculated:</b> Cut Width = Full Width − 1 &nbsp;|&nbsp; Total Points = P1 + P2×2 + P3×3 + P4×4 (4-point system, editable in Formula Settings)</div>
+    </div>
+
+    <div class="panel">
+      <h3>Summary</h3>
+      <div class="grid grid-4" style="margin-bottom:12px;">
+        <div><label class="small">Total Rejection Qty</label><input class="field-input" type="number" id="s-rejection" value="0"></div>
+        <div><label class="small">Total Bit</label><input class="field-input" type="number" id="s-bit" value="0"></div>
+        <div><label class="small">Lab Testing</label><input class="field-input" type="number" id="s-lab" value="0"></div>
+        <div><label class="small">Total Hold</label><input class="field-input" type="number" id="s-hold" value="0"></div>
+        <div><label class="small">Sample Courier</label><input class="field-input" type="number" id="s-courier" value="0"></div>
+        <div><label class="small">Greige Issued Qty (target)</label><input class="field-input" type="number" id="s-target" value="0"></div>
+      </div>
+      <div class="summary-grid">
+        <div class="sum-card computed"><label>Total MTRS Inspected</label><div class="val" id="calc-totalmtrs">0</div></div>
+        <div class="sum-card computed"><label>Average GSM</label><div class="val" id="calc-avggsm">0</div></div>
+        <div class="sum-card computed"><label>Shipped Qty</label><div class="val" id="calc-shipped">0</div></div>
+        <div class="sum-card computed" id="short-card"><label>Short Qty / %</label><div class="val" id="calc-short">0</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h3 style="margin:0;">Additional Test Parameters</h3>
+        <div class="btnrow"><button class="btn small" onclick="addParamRow()">+ Add Parameter</button></div>
+      </div>
+      <div class="table-wrap">
+        <table class="report" id="paramTable">
+          <thead><tr><th style="text-align:left;">Parameter</th><th>Batch-1</th><th>Batch-2</th><th>Batch-3</th><th>Batch-4</th><th>Batch-5</th><th>Hold</th><th></th></tr></thead>
+          <tbody id="paramTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Remarks</h3>
+      <textarea class="field-input" id="f-remarks" rows="2" style="resize:vertical;"></textarea>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="view-history" class="hidden">
+    <div class="topbar"><div><h2>Report History</h2><div class="meta">Saved locally in this browser</div></div></div>
+    <div class="panel">
+      <div class="search-bar">
+        <input class="field-input" id="hist-search" placeholder="Search by customer, quality, shade, lot..." oninput="renderHistory()">
+      </div>
+      <table class="hist-table">
+        <thead><tr><th>Date</th><th>Customer</th><th>Quality</th><th>Shade</th><th>Total Mtrs</th><th>Saved</th><th></th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+      <div id="history-empty" class="hint hidden">No saved reports yet. Create a report and click Save.</div>
+    </div>
+  </section>
+
+  <!-- IMPORT -->
+  <section id="view-import" class="hidden">
+    <div class="topbar"><div><h2>Import Excel / PDF</h2><div class="meta">Bring an existing report into the editor — fully editable, not an image</div></div></div>
+    <div class="panel">
+      <h3>Import Excel (.xlsx)</h3>
+      <p class="hint">Reads sheet headers, rows and values from an existing workbook and maps them into the editable report below. Values, not screenshots — every cell can be edited afterward.</p>
+      <label class="btn primary" style="display:inline-block;">Choose Excel File<input type="file" id="excelInput2" accept=".xlsx,.xls"></label>
+    </div>
+    <div class="panel">
+      <h3>Import PDF</h3>
+      <p class="hint">Extracts text/table content from a text-based PDF (e.g. one exported by this app) into editable rows. <b>Scanned/photographed PDFs need OCR</b>, which requires a server-side OCR service — not something a browser-only page can do reliably; the extracted text box below will show raw lines for you to map manually in that case.</p>
+      <label class="btn primary" style="display:inline-block;">Choose PDF File<input type="file" id="pdfInput2" accept=".pdf"></label>
+      <div id="pdfRawWrap" class="hidden" style="margin-top:12px;">
+        <label class="small">Extracted raw text (review &amp; edit report manually if table mapping looks off)</label>
+        <textarea class="field-input" id="pdfRawText" rows="10" style="font-family:monospace;font-size:11px;"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPLATES -->
+  <section id="view-templates" class="hidden">
+    <div class="topbar"><div><h2>Templates</h2><div class="meta">Reusable header + column presets</div></div></div>
+    <div class="panel">
+      <div id="templateList"></div>
+      <div id="template-empty" class="hint hidden">No templates saved yet. Open a report and click "Save Template".</div>
+    </div>
+  </section>
+
+  <!-- FORMULAS -->
+  <section id="view-formulas" class="hidden">
+    <div class="topbar"><div><h2>Formula Settings</h2><div class="meta">Change calculation rules without touching source code</div></div></div>
+    <div class="panel">
+      <h3>Row Formulas <span class="badge ok" id="formula-status">valid</span></h3>
+      <div class="formula-row">
+        <div class="fname">Cut Width</div>
+        <input class="field-input" id="formula-cwidth" value="fWidth - 1">
+      </div>
+      <div class="fdesc">Variables available: fWidth, mtrs, p1, p2, p3, p4</div>
+      <div class="formula-row">
+        <div class="fname">Total Points</div>
+        <input class="field-input" id="formula-points" value="p1 + p2*2 + p3*3 + p4*4">
+      </div>
+      <div class="fdesc">Standard 4-point fabric inspection system. Variables: p1..p4 (defects per point class), fWidth, mtrs</div>
+      <h3 style="margin-top:22px;">Report-level Formulas</h3>
+      <div class="formula-row">
+        <div class="fname">Shipped Qty</div>
+        <input class="field-input" id="formula-shipped" value="totalMtrs">
+      </div>
+      <div class="fdesc">Variables: totalMtrs, avgGsm, target, rejection, bit, lab, hold, courier</div>
+      <div class="formula-row">
+        <div class="fname">Total Inspected Qty</div>
+        <input class="field-input" id="formula-inspected" value="totalMtrs + rejection + bit + lab">
+      </div>
+      <div class="formula-row">
+        <div class="fname">Short %</div>
+        <input class="field-input" id="formula-shortpct" value="(target - inspected) / target * 100">
+      </div>
+      <div class="fdesc">Variables: target, inspected, totalMtrs</div>
+      <div class="btnrow" style="margin-top:14px;">
+        <button class="btn primary" onclick="applyFormulas()">Apply &amp; Recalculate</button>
+        <button class="btn ghost" onclick="resetFormulas()">Reset to Defaults</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="view-settings" class="hidden">
+    <div class="topbar"><div><h2>Settings</h2><div class="meta">Page & storage options</div></div></div>
+    <div class="panel">
+      <h3>PDF / Print Page Setup</h3>
+      <div class="grid grid-3">
+        <div><label class="small">Orientation</label>
+          <select class="field-input" id="opt-orientation" onchange="scheduleAutosave()">
+            <option value="auto">Auto</option>
+            <option value="landscape" selected>A4 Landscape</option>
+            <option value="portrait">A4 Portrait</option>
+          </select>
+        </div>
+        <div><label class="small">Fit to one page</label>
+          <select class="field-input" id="opt-fit" onchange="scheduleAutosave()">
+            <option value="yes" selected>Yes — shrink to fit</option>
+            <option value="no">No — allow multiple pages</option>
+          </select>
+        </div>
+        <div><label class="small">Filename prefix</label><input class="field-input" id="opt-filename" value="Fabric_Inspection_Report"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Storage</h3>
+      <p class="hint">Reports, templates and settings are stored in this browser's local storage only. Clearing browser data will remove them. Use Save as Excel/PDF for a permanent copy.</p>
+      <button class="btn danger" onclick="if(confirm('Erase ALL saved reports and templates from this browser?')){localStorage.clear();loadAllFromStorage();renderHistory();renderDashboard();renderTemplates();alert('Cleared.');}">Erase All Local Data</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- PDF Preview Modal -->
+<div class="modal-bg hidden" id="previewModal">
+  <div class="modal" style="width:1180px;">
+    <div class="modal-head">
+      <h4>PDF Preview — A4 <span id="preview-orient-label"></span></h4>
+      <div class="btnrow">
+        <button class="btn accent small" onclick="exportPDF()">Save as PDF</button>
+        <button class="btn ghost small" onclick="closeModal('previewModal')">Close</button>
+      </div>
+    </div>
+    <div class="modal-body" style="background:#e9e4d6;overflow:auto;">
+      <div id="a4PreviewSheet"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Save Template Modal -->
+<div class="modal-bg hidden" id="templateModal">
+  <div class="modal" style="width:420px;">
+    <div class="modal-head"><h4>Save Template</h4><button class="icon-btn" onclick="closeModal('templateModal')">✕</button></div>
+    <div class="modal-body">
+      <label class="small">Template Name</label>
+      <input class="field-input" id="templateNameInput" placeholder="e.g. Fabric Inspection Report">
+      <div class="btnrow" style="margin-top:14px;"><button class="btn primary" onclick="confirmSaveTemplate()">Save Template</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- hidden print/export root -->
+<div id="print-area" style="position:absolute;left:-9999px;top:0;"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
