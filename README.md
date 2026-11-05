@@ -1,15 +1,11 @@
-# FabricQ ERP – Fabric Quality Chart Management
-Stack: HTML + CSS + JS + Supabase (Auth, Postgres, Realtime, Storage). No build step.
-## Architecture
-- `profiles` (id, email, role admin|user) · `qualities` (all grey/finish/additional fields, auto `quality_id` QLT-00001 via sequence)
-- RLS: any logged-in user can read/add/edit; only **admin** can delete or change roles. First registered user = admin.
-- Realtime subscription syncs changes across devices; files go to Storage bucket `quality-files`.
+# FabricQ ERP – Fabric Quality Chart Management (no login)
+HTML + CSS + JS + Supabase (Postgres, Realtime, Storage). The site opens straight to the Dashboard; there is no login, username or password.
 ## Setup
 1. Create a project at supabase.com.
-2. SQL Editor → paste `supabase/schema.sql` → Run.
+2. SQL Editor → paste `supabase/schema.sql` → Run (safe to re-run; removes the old auth tables if present).
 3. Project Settings → API → copy URL + anon key into `js/config.js`.
-4. Authentication → Providers → Email (disable "Confirm email" for instant sign-up if desired).
-5. Open `index.html` via any static server (or deploy), **Create Account** – the first account is Admin. Promote others in Users.
+4. Open `index.html` through any static host.
 ## Deploy to GitHub Pages
-Push folder to a repo → Settings → Pages → Branch `main` / root → Save. Then add your Pages URL in Supabase → Authentication → URL Configuration → Site URL.
-Also works on Netlify / Vercel / Cloudflare Pages (static).
+Push the folder to a repo → Settings → Pages → Branch `main` / root → Save. Netlify / Vercel / Cloudflare Pages also work.
+## Security note
+Without login, anyone who has the site link (and can read the anon key in config.js) can read, edit and delete data. Keep the URL private and export Excel backups regularly.
