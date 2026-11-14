@@ -257,7 +257,7 @@ function render(){
   const linkList=document.createElement('div');linkList.className='link-list card-link-hint';
   const hint=document.createElement('span');hint.textContent='Click poster to view links';linkList.append(hint);
   const actions=document.createElement('div');actions.className='actions';
-  const edit=document.createElement('button');edit.className='secondary';edit.textContent='Edit movie';edit.onclick=()=>openEditMovie(m);
+  const edit=document.createElement('button');edit.className='secondary';edit.textContent='hidden';edit.onclick=()=>openEditMovie(m);
   const del=document.createElement('button');del.className='danger';del.textContent='Delete movie';del.onclick=async()=>{if(confirm('Delete this movie entry?')){try{await deleteDoc(doc(db,'movies',m.id))}catch(e){alert(e.message)}}};
   actions.append(edit,del);body.append(title,meta,tags,notes,linkList,actions);card.append(poster,body);$('movies').append(card);
  }
