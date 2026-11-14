@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Private Movie Hub</title>
+<style>
+:root{--bg:#090d18;--panel:#111a2b;--panel2:#172238;--text:#f4f7ff;--muted:#9ba9c2;--accent:#8b5cf6;--line:#26344d;--good:#34d399;--danger:#fb7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#17213b 0,#090d18 55%);color:var(--text);font:15px/1.5 Inter,system-ui,Segoe UI,Arial,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:11px;padding:11px 16px;background:var(--accent);color:white;font-weight:700}button.secondary{background:#24324b}button.danger{background:#7f263e}button:disabled{opacity:.5;cursor:not-allowed}
+.wrap{max-width:1180px;margin:auto;padding:24px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}.brand{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:850}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#8b5cf6,#ec4899);display:grid;place-items:center;font-size:22px}
+small,.muted{color:var(--muted)}.hidden{display:none!important}.panel{background:rgba(17,26,43,.94);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 18px 50px #0004}
+.auth{max-width:440px;margin:8vh auto}.auth h1{margin:0 0 4px}.field{display:grid;gap:6px;margin:12px 0}.field label{color:#c6d1e5;font-size:13px;font-weight:650}.field input,.field select,.field textarea,.search{width:100%;background:#0b1322;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:12px;outline:none}.field input:focus,.field textarea:focus,.search:focus{border-color:var(--accent)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:18px 0}.search{max-width:420px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:18px}.movie{overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:16px}.poster{height:245px;background:linear-gradient(145deg,#253450,#101827);display:grid;place-items:center;color:#8192b2;font-size:44px;overflow:hidden}.poster img{width:100%;height:100%;object-fit:cover}.moviebody{padding:14px}.movie h3{font-size:16px;margin:0 0 5px}.tags{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0}.tag{font-size:11px;color:#d9caff;background:#38285f;padding:4px 8px;border-radius:20px}.actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}.actions button{flex:1;padding:9px 8px;font-size:12px}.link-row{display:grid;grid-template-columns:115px 1fr 1fr auto;gap:7px;margin:8px 0;align-items:center}.link-row input{min-width:0;background:#0b1322;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px;width:100%}.link-list{display:grid;gap:7px;margin-top:12px}.link-item{display:flex;gap:7px;align-items:center;flex-wrap:wrap;background:#0b1322;border:1px solid var(--line);border-radius:10px;padding:8px}.link-item span{flex:1;min-width:90px;font-size:12px;color:#c6d1e5}.link-item button{padding:7px 10px;font-size:11px}.empty{text-align:center;padding:55px 15px;color:var(--muted)}.notice{padding:12px 14px;border-radius:12px;background:#182a37;border:1px solid #285044;color:#b9f5db;margin:14px 0}.warn{background:#352a19;border-color:#6b5126;color:#f9dfa8}.status{font-size:12px;color:var(--muted)}.modal{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:18px;z-index:5}.modal .panel{width:min(560px,100%);max-height:90vh;overflow:auto}.right{display:flex;gap:8px;align-items:center}.divider{height:1px;background:var(--line);margin:16px 0}
+@media(max-width:600px){.link-row{grid-template-columns:1fr}.wrap{padding:15px}.top{align-items:flex-start}.top .right{flex-direction:column;align-items:flex-end}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.poster{height:190px}.moviebody{padding:10px}.actions{flex-direction:column}.search{max-width:none;width:100%}}
+
+/* AURA cinematic gallery skin */
+body{background:#0d0d12;color:#f5f4fa;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}
+.wrap{max-width:none;padding:18px 24px 34px}
+.top{height:58px;position:sticky;top:0;z-index:10;background:#101015;border-bottom:1px solid #282731;margin:-18px -24px 20px;padding:0 28px}
+.brand{font-size:25px;letter-spacing:-1px;gap:9px}.logo{width:auto;height:auto;background:none;color:#a78bfa;font-size:28px}
+.brand>div:last-child{line-height:1.1}.brand .status{font-size:10px;letter-spacing:0;color:#858391;font-weight:400;margin-top:3px}
+.panel{background:#15151d;border-color:#2a2933}
+.auth{margin:8vh auto}
+#app>.row h1{font-size:22px}
+#app>.row .muted{font-size:12px}
+.toolbar{justify-content:center;margin:15px 0}
+.search{background:#15151d;border-color:#302e39}
+.grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:9px}
+.movie{background:#101015;border:1px solid #282731;border-radius:13px;box-shadow:none;transition:transform .18s,border-color .18s}
+.movie:hover{transform:translateY(-3px);border-color:#6f5a9d}
+.poster{height:auto;aspect-ratio:0.66;border-radius:10px;background:#191922}
+.poster img{object-fit:cover}
+.moviebody{padding:9px 8px 12px;text-align:center}
+.movie h3{font-size:13px;line-height:1.45;min-height:38px;display:flex;align-items:center;justify-content:center}
+.moviebody>.muted{font-size:10px}
+.tags{justify-content:center;margin:7px 0}
+.tag{background:#8057ee;color:#090812;font-size:10px;font-weight:800;border-radius:7px}
+.link-list{gap:6px}
+.link-item{background:#171720;border-color:#2d2b38}
+.link-item span{font-size:11px}
+.link-item button{font-size:10px;padding:7px 9px}
+.actions button{font-size:11px}
+.field input,.field select,.field textarea{background:#0d0d14;border-color:#34323f}
+button{border-radius:9px}
+@media(max-width:1250px){.grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:850px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.wrap{padding:14px}.top{margin:-14px -14px 16px;padding:0 16px}}
+@media(max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.poster{height:auto}.moviebody{padding:8px}.top{height:auto;min-height:58px}}
+
+
+/* Movie profile / detail page */
+.movie-open,.movie-open-title{cursor:pointer}
+.movie-open:focus-visible,.movie-open-title:focus-visible{outline:2px solid #a78bfa;outline-offset:3px}
+.movie-open-title:hover{color:#c4b5fd}
+.card-link-hint{font-size:11px;color:#9692a3;text-align:center;margin-top:8px}
+.detail-overlay{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.82);display:grid;place-items:center;padding:22px;overflow:auto}
+.detail-panel{position:relative;width:min(900px,100%);max-height:92vh;overflow:auto;background:#13131b;border:1px solid #373342;border-radius:20px;padding:28px;box-shadow:0 25px 90px #000b}
+.detail-close{position:absolute;right:17px;top:15px;width:38px;height:38px;border-radius:50%;background:#292533;color:#fff;font-size:18px;z-index:2}
+.detail-layout{display:grid;grid-template-columns:minmax(190px,290px) minmax(0,1fr);gap:28px;align-items:start}
+.detail-poster{aspect-ratio:2/3;overflow:hidden;border-radius:14px;background:#22202c;display:grid;place-items:center;color:#aaa;font-size:60px}
+.detail-poster img{width:100%;height:100%;object-fit:cover}
+.detail-kicker{font-size:11px;letter-spacing:2px;color:#a78bfa;font-weight:800;margin:5px 0 10px}
+.detail-info h2{font-size:30px;line-height:1.2;margin:0 45px 10px 0}
+.detail-meta{color:#b5aec6;font-size:13px;margin-bottom:14px}
+.detail-notes{color:#d0cbd9;line-height:1.6;white-space:pre-wrap;margin:0 0 20px}
+.detail-info h3{font-size:16px;margin:18px 0 10px}
+.detail-links{display:grid;gap:10px}
+.detail-link-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px;background:#1b1a25;border:1px solid #34313f;border-radius:12px}
+.detail-link-info{display:grid;gap:5px;min-width:0}
+.detail-link-info strong{font-size:14px;color:#fff}
+.detail-link-info small{font-size:11px;color:#aaa4b7;overflow-wrap:anywhere}
+.detail-link-actions{display:flex;gap:7px;flex-wrap:wrap}
+.detail-link-actions button{padding:8px 12px;font-size:12px;white-space:nowrap}
+.detail-empty{color:#a9a4b4;padding:18px;text-align:center;border:1px dashed #454052;border-radius:12px}
+@media(max-width:650px){
+ .detail-overlay{padding:10px;align-items:start}
+ .detail-panel{padding:18px 14px;max-height:96vh;border-radius:15px}
+ .detail-layout{grid-template-columns:110px minmax(0,1fr);gap:14px}
+ .detail-info h2{font-size:21px;margin-right:32px}
+ .detail-kicker{font-size:9px}
+ .detail-link-row{align-items:flex-start;flex-direction:column}
+ .detail-link-actions{width:100%}
+ .detail-link-actions button{flex:1}
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">▶</div><div>PRIVATE <span style="color:#b69aff">MOVIE HUB</span><div class="status">Your private movie-link library</div></div></div>
+    <div class="right hidden" id="userbar"><span class="status" id="useremail"></span><button class="secondary" id="logout">Sign out</button></div>
+  </header>
+
+  <section class="panel auth" id="authbox">
+    <h1>Welcome back</h1><div class="muted">Sign in to access your private movie collection.</div>
+    <div class="notice warn">Private access is controlled by Firebase Authentication. Only accounts you authorize should be able to sign in.</div>
+    <div class="field"><label>Email</label><input id="email" type="email" autocomplete="username" placeholder="you@example.com"></div>
+    <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Your password"></div>
+    <button id="signin" style="width:100%">Sign in</button>
+    <p class="status" id="authmsg">Ask the site owner to create your account. Public sign-up is disabled.</p>
+  </section>
+
+  <main id="app" class="hidden">
+    <div class="row" style="align-items:center">
+      <div><h1 style="margin:0">My Movie Collection</h1><div class="muted">Save and share legal watch or download links with your invited friends.</div></div>
+      <button id="addBtn">＋ Add movie</button>
+    </div>
+    <div class="toolbar">
+      <input class="search" id="search" placeholder="Search movie, language, year…">
+      <select id="filter" class="search" style="max-width:190px"><option value="">All languages</option><option>Tamil</option><option>Telugu</option><option>Hindi</option><option>Malayalam</option><option>Kannada</option><option>English</option><option>Other</option></select>
+    </div>
+    <div id="notice" class="notice hidden"></div>
+    <div id="movies" class="grid"></div>
+  </main>
+</div>
+
+<div class="modal hidden" id="modal">
+ <div class="panel">
+  <div class="row"><h2 style="margin:0">Add a movie link</h2><button class="secondary" id="closeModal" style="flex:0 0 auto">✕</button></div>
+  <div class="field"><label>Movie name *</label><input id="mTitle" placeholder="Movie title"></div>
+  <div class="row">
+   <div class="field"><label>Language</label><select id="mLanguage"><option>Tamil</option><option>Telugu</option><option>Hindi</option><option>Malayalam</option><option>Kannada</option><option>English</option><option>Other</option></select></div>
+   <div class="field"><label>Release year</label><input id="mYear" type="number" min="1900" max="2100" placeholder="2026"></div>
+  </div>
+  <div class="field"><label>Poster image URL (optional)</label><input id="mPoster" type="url" placeholder="https://…"></div>
+  <div class="field"><label>Watch / download links *</label><div id="linkRows"></div><button type="button" class="secondary" id="addLinkRow" style="margin-top:8px">＋ Add another link</button><div class="status">Each link: label, URL and suggested download filename. External hosts may ignore the filename request.</div></div>
+  <div class="field"><label>Notes (optional)</label><textarea id="mNotes" rows="2" placeholder="Quality, audio, subtitles…"></textarea></div>
+  <div class="notice warn">Share only links to content you own or are authorized to distribute. This site stores links and details, not movie files.</div>
+  <button id="saveMovie" style="width:100%">Save movie</button>
+  <div class="status" id="saveMsg"></div>
+ </div>
+</div>
+
+<div class="detail-overlay hidden" id="detailOverlay" role="dialog" aria-modal="true" aria-label="Movie details">
+ <section class="detail-panel">
+  <button class="detail-close" id="detailClose" aria-label="Close details">✕</button>
+  <div class="detail-layout">
+   <div class="detail-poster" id="detailPoster"></div>
+   <div class="detail-info">
+    <div class="detail-kicker">MOVIE DETAILS</div>
+    <h2 id="detailTitle">Movie title</h2>
+    <div class="detail-meta" id="detailMeta"></div>
+    <p class="detail-notes" id="detailNotes"></p>
+    <h3>Watch / Download Links</h3>
+    <div id="detailLinks" class="detail-links"></div>
+   </div>
+  </div>
+ </section>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+// ADMIN ACCESS: Replace with your own Firebase login email(s), lowercase.
+const OWNER_EMAILS = ["lismount2025@gmail.com"];
+function isAdminUser(user=currentUser){
+  const email=(user?.email||"").trim().toLowerCase();
+  return OWNER_EMAILS.map(x=>x.toLowerCase()).includes(email);
+}
+
+// 1) Replace these values with your Firebase project's Web App config.
+const firebaseConfig = {
+  apiKey: "AIzaSyA3ZKLn_OJVfG6YxyjOs9et4BUWId80VK4",
+  authDomain: "movie-share-1cb37.firebaseapp.com",
+  projectId: "movie-share-1cb37",
+  storageBucket: "movie-share-1cb37.firebasestorage.app",
+  messagingSenderId: "31019962894",
+  appId: "1:31019962894:web:fe9d7155cdfdb0f129625f"
+};
+const configured = !Object.values(firebaseConfig).some(v => String(v).startsWith("PASTE_"));
+const $ = id => document.getElementById(id);
+let auth, db, unsubscribe = null, currentUser = null, movieData = [];
+
+function message(el, text, isError=false){el.textContent=text;el.style.color=isError?'#fda4af':'#9ba9c2'}
+function safeUrl(value){try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return ''}}
+function showNotice(text, warn=false){$('notice').textContent=text;$('notice').classList.remove('hidden');$('notice').classList.toggle('warn',warn)}
+let linkRowCount=0, editingMovieId=null;
+function addLinkRow(label='',url='',downloadName=''){
+ linkRowCount++;
+ const row=document.createElement('div');row.className='link-row';
+ const name=document.createElement('input');name.value=label||('Link '+linkRowCount);name.placeholder='Link label (e.g. 4K HDR)';
+ const address=document.createElement('input');address.type='url';address.value=url;address.placeholder='https:// movie link';
+ const file=document.createElement('input');file.value=downloadName||'';file.placeholder='Download file name (e.g. Movie 4K.mkv)';
+ const remove=document.createElement('button');remove.type='button';remove.className='danger';remove.textContent='✕';remove.title='Remove link';remove.onclick=()=>row.remove();
+ row.append(name,address,file,remove);$('linkRows').append(row);
+}
+function getMovieLinks(){
+ const rows=[...$('linkRows').children];
+ return rows.map((r,i)=>({
+  label:r.children[0].value.trim()||('Link '+(i+1)),
+  url:safeUrl(r.children[1].value.trim()),
+  downloadName:r.children[2].value.trim()
+ })).filter(x=>x.url);
+}
+function openEditMovie(m){
+ editingMovieId=m.id;
+ $('mTitle').value=m.title||'';$('mLanguage').value=m.language||'Tamil';
+ $('mYear').value=m.year||'';$('mPoster').value=m.poster||'';$('mNotes').value=m.notes||'';
+ $('linkRows').innerHTML='';linkRowCount=0;
+ const links=Array.isArray(m.links)&&m.links.length?m.links:(m.link?[{label:'Link 1',url:m.link}]:[]);
+ (links.length?links:[{label:'Link 1',url:'',downloadName:''}]).forEach(x=>addLinkRow(x.label,x.url,x.downloadName||''));
+ $('saveMovie').textContent='Update movie';$('modal').classList.remove('hidden');
+}
+
+
+function openMovieProfile(m){
+ const overlay=$('detailOverlay'),poster=$('detailPoster'),linksBox=$('detailLinks');
+ poster.innerHTML='';
+ const posterUrl=safeUrl(m.poster||'');
+ if(posterUrl){const img=document.createElement('img');img.src=posterUrl;img.alt=(m.title||'Movie')+' poster';poster.append(img)}
+ else poster.textContent='🎬';
+ $('detailTitle').textContent=m.title||'Untitled';
+ $('detailMeta').textContent=[m.year,m.language].filter(Boolean).join(' • ')||'Movie';
+ $('detailNotes').textContent=m.notes||'';
+ linksBox.innerHTML='';
+ const links=Array.isArray(m.links)&&m.links.length?m.links:(m.link?[{label:'Link 1',url:m.link}]:[]);
+ links.forEach((item,i)=>{
+  const url=safeUrl(item.url||'');if(!url)return;
+  const row=document.createElement('div');row.className='detail-link-row';
+  const info=document.createElement('div');info.className='detail-link-info';
+  const name=document.createElement('strong');name.textContent=item.label||('Link '+(i+1));
+  const filename=document.createElement('small');filename.textContent=item.downloadName?('File name: '+item.downloadName):'Filename set by hosting site';
+  info.append(name,filename);
+  const actions=document.createElement('div');actions.className='detail-link-actions';
+  const open=document.createElement('button');open.textContent='Open';open.onclick=()=>window.open(url,'_blank','noopener,noreferrer');
+  const copy=document.createElement('button');copy.className='secondary';copy.textContent='Copy link';copy.onclick=async()=>{try{await navigator.clipboard.writeText(url);copy.textContent='Copied!';setTimeout(()=>copy.textContent='Copy link',1300)}catch{prompt('Copy this link:',url)}};
+  const download=document.createElement('button');download.textContent='Download';download.onclick=()=>{
+    const a=document.createElement('a');a.href=url;
+    if(item.downloadName)a.download=item.downloadName;
+    a.target='_blank';a.rel='noopener noreferrer';document.body.append(a);a.click();a.remove();
+  };
+  actions.append(open,copy,download);row.append(info,actions);linksBox.append(row);
+ });
+ if(!linksBox.children.length){const empty=document.createElement('div');empty.className='detail-empty';empty.textContent='No valid links have been added yet.';linksBox.append(empty)}
+ overlay.classList.remove('hidden');document.body.classList.add('detail-open');
+}
+function closeMovieProfile(){$('detailOverlay').classList.add('hidden');document.body.classList.remove('detail-open')}
+
+function render(){
+ const term=$('search').value.toLowerCase(), lang=$('filter').value;
+ const list=movieData.filter(m=>(!lang||m.language===lang)&&[m.title,m.language,m.year,m.notes].join(' ').toLowerCase().includes(term));
+ $('movies').innerHTML='';
+ if(!list.length){$('movies').innerHTML='<div class="empty" style="grid-column:1/-1">🎬<h3>No movies found</h3><div>Add your first movie link to get started.</div></div>';return}
+ for(const m of list){
+  const card=document.createElement('article');card.className='movie';
+  const poster=document.createElement('div');poster.className='poster movie-open';poster.tabIndex=0;poster.setAttribute('role','button');poster.setAttribute('aria-label','Open '+(m.title||'movie')+' details');
+  const p=safeUrl(m.poster||'');
+  if(p){const img=document.createElement('img');img.src=p;img.alt='Movie poster';img.onerror=()=>{poster.textContent='🎬'};poster.append(img)}else poster.textContent='🎬';
+  poster.onclick=()=>openMovieProfile(m);
+  poster.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openMovieProfile(m)}};
+  const body=document.createElement('div');body.className='moviebody';
+  const title=document.createElement('h3');title.textContent=m.title||'Untitled';title.className='movie-open-title';title.tabIndex=0;title.setAttribute('role','button');title.onclick=()=>openMovieProfile(m);title.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openMovieProfile(m)}};
+  const meta=document.createElement('div');meta.className='muted';meta.textContent=[m.year,m.language].filter(Boolean).join(' • ');
+  const tags=document.createElement('div');tags.className='tags';const tag=document.createElement('span');tag.className='tag';tag.textContent=m.language||'Other';tags.append(tag);
+  const notes=document.createElement('div');notes.className='status';notes.textContent=m.notes||'';
+  const linkList=document.createElement('div');linkList.className='link-list card-link-hint';
+  const hint=document.createElement('span');hint.textContent='Click poster to view links';linkList.append(hint);
+  const actions=document.createElement('div');actions.className='actions';
+  const edit=document.createElement('button');edit.className='secondary';edit.textContent='Edit movie';edit.onclick=()=>openEditMovie(m);
+  const del=document.createElement('button');del.className='danger';del.textContent='Delete movie';del.onclick=async()=>{if(confirm('Delete this movie entry?')){try{await deleteDoc(doc(db,'movies',m.id))}catch(e){alert(e.message)}}};
+  actions.append(edit,del);body.append(title,meta,tags,notes,linkList,actions);card.append(poster,body);$('movies').append(card);
+ }
+}
+if(!configured){$('authmsg').textContent='Setup required: add your Firebase Web App config in this HTML file, then publish it. See the setup notes supplied with this file.';$('signin').disabled=true;showNotice('Firebase is not connected yet. Follow the setup steps before using this website.',true)}
+else{
+ const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);
+ $('signin').onclick=async()=>{message($('authmsg'),'Signing in…');try{await signInWithEmailAndPassword(auth,$('email').value.trim(),$('password').value)}catch(e){message($('authmsg'),e.message,true)}};
+ $('password').addEventListener('keydown',e=>{if(e.key==='Enter')$('signin').click()});
+ onAuthStateChanged(auth,user=>{
+  currentUser=user;
+  $('authbox').classList.toggle('hidden',!!user);$('app').classList.toggle('hidden',!user);$('userbar').classList.toggle('hidden',!user);
+  if(user){$('useremail').textContent=user.email||'Signed in';if(unsubscribe)unsubscribe();unsubscribe=onSnapshot(query(collection(db,'movies'),orderBy('createdAt','desc')),snap=>{movieData=snap.docs.map(d=>({id:d.id,...d.data()}));render()},err=>showNotice(err.message,true))}
+  else{if(unsubscribe)unsubscribe();movieData=[]}
+ });
+ $('logout').onclick=()=>signOut(auth);
+ $('detailClose').onclick=closeMovieProfile;
+ $('detailOverlay').addEventListener('click',e=>{if(e.target===$('detailOverlay'))closeMovieProfile()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMovieProfile()});
+ $('addBtn').onclick=()=>{
+  editingMovieId=null;
+  $('mTitle').value='';$('mLanguage').value='Tamil';$('mYear').value='';
+  $('mPoster').value='';$('mNotes').value='';
+  $('linkRows').innerHTML='';linkRowCount=0;
+  addLinkRow();
+  $('saveMovie').textContent='Save movie';
+  message($('saveMsg'),'Add one or more movie links.');
+  $('modal').classList.remove('hidden');
+ };
+ $('addLinkRow').onclick=()=>addLinkRow();
+ $('closeModal').onclick=()=>{
+  $('modal').classList.add('hidden');
+  editingMovieId=null;
+  $('saveMovie').textContent='Save movie';
+ };
+ $('saveMovie').onclick=async()=>{
+  const title=$('mTitle').value.trim(),links=getMovieLinks();
+  if(!title||!links.length){message($('saveMsg'),'Movie name and at least one valid link are required.',true);return}
+  $('saveMovie').disabled=true;message($('saveMsg'),'Saving…');
+  try{
+   const movieFields={title,language:$('mLanguage').value,year:$('mYear').value.trim(),poster:safeUrl($('mPoster').value.trim()),links,notes:$('mNotes').value.trim()};
+   if(editingMovieId){await updateDoc(doc(db,'movies',editingMovieId),movieFields)}
+   else{await addDoc(collection(db,'movies'),{...movieFields,createdAt:serverTimestamp(),createdBy:currentUser.uid})}
+   ['mTitle','mYear','mPoster','mNotes'].forEach(id=>$(id).value='');$('linkRows').innerHTML='';linkRowCount=0;$('modal').classList.add('hidden');editingMovieId=null;$('saveMovie').textContent='Save movie';message($('saveMsg'),'Saved')
+  }
+  catch(e){message($('saveMsg'),e.message,true)}finally{$('saveMovie').disabled=false}
+ };
+ $('search').oninput=render;$('filter').onchange=render;
+}
+</script>
+</body></html>
