@@ -893,8 +893,8 @@ let activePersonalView='';
 function renderRecent(){
  const box=$('recentMovies');if(!box)return;box.innerHTML='';
  const ids=historyIds(),items=ids.map(id=>movieData.find(m=>m.id===id)).filter(Boolean).slice(0,8);
- #if(!items.length){box.innerHTML='<div class="v3-empty">Movies you open will appear here.</div>';return}
- items.forEach(m=>{const c=document.createElement('article');c.className='movie pc-mini-card';const p=document.createElement('div');p.className='poster';const u=safeUrl(m.poster||'');if(u){const im=document.createElement('img');im.src=u;im.alt='';p.append(im)}else p.textContent='🎬';p.onclick=()=>openMovieProfile(m);const b=document.createElement('div');b.className='moviebody';const t=document.createElement('h3');t.textContent=m.title||'Untitled';b.append(t);c.append(p,b);box.append(c)});
+/*  if(!items.length){box.innerHTML='<div class="v3-empty">Movies you open will appear here.</div>';return}
+ */ items.forEach(m=>{const c=document.createElement('article');c.className='movie pc-mini-card';const p=document.createElement('div');p.className='poster';const u=safeUrl(m.poster||'');if(u){const im=document.createElement('img');im.src=u;im.alt='';p.append(im)}else p.textContent='🎬';p.onclick=()=>openMovieProfile(m);const b=document.createElement('div');b.className='moviebody';const t=document.createElement('h3');t.textContent=m.title||'Untitled';b.append(t);c.append(p,b);box.append(c)});
 }
 function renderAdminStats(){
  const box=$('adminStats');if(!box)return;
