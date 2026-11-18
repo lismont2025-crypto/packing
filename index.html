@@ -1210,8 +1210,8 @@ function pcUpdateDashboard(){
   $('pcHeroWatch').onclick=()=>document.getElementById('movie-library').scrollIntoView({behavior:'smooth'});
  }
  const recent=$('pcRecentlyAdded'),popular=$('pcMostDownloaded');recent.innerHTML='';popular.innerHTML='';
- [...movieData].sort((a,b)=>pcMovieDate(b)-pcMovieDate(a)).slice(0,5).forEach(m=>pcMakeMini(m,recent));
- [...movieData].slice().reverse().slice(0,4).forEach(m=>pcMakeMini(m,popular));
+ [...movieData].sort((a,b)=>pcMovieDate(b)-pcMovieDate(a)).slice(0,3).forEach(m=>pcMakeMini(m,recent));
+ [...movieData].slice().reverse().slice(0,3).forEach(m=>pcMakeMini(m,popular));
  $('pcStatMovies').textContent=movieData.length.toLocaleString();
  $('pcStatLinks').textContent=movieData.reduce((n,m)=>n+(m.links?.length|| (m.link?1:0)),0).toLocaleString();
  $('pcStatFavs').textContent=favIds().length.toLocaleString();
